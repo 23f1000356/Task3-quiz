@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom, #ffffff, #ffd699);
+      color: #333;
+    }
+    header {
+      background-color: #ff6f00;
+      color: #fff;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header a {
+      color: #fff;
+      text-decoration: none;
+      margin: 0 10px;
+    }
+    header a:hover {
+      text-decoration: underline;
+    }
+    .form-container {
+      padding: 20px;
+      margin: 20px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .form-container h2 {
+      margin-bottom: 20px;
+    }
+    .form-container select, .form-container input, .form-container button {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    .form-container button {
+      background-color: #ff6f00;
+      color: white;
+      cursor: pointer;
+    }
+    .form-container button:hover {
+      background-color: #e65c00;
+    }
+    .question-box {
+      margin-top: 20px;
+    }
+    .question-box input, .question-box textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    .question-box button {
+      width: 100%;
+      padding: 10px;
+      background-color: #ff6f00;
+      color: white;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .question-box button:hover {
+      background-color: #e65c00;
+    }
+    .question-paper {
+      margin-top: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .rules {
+      margin: 20px 0;
+      font-size: 16px;
+      font-weight: bold;
+      color: #ff6f00;
+    }
+    .rules ul {
+      list-style-type: disc; /* Adds bullet points */
+      margin-left: 20px;
+    }
+    #quizQuestionsList {
+      width: 80%;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin-top: 20px;
+      text-align: left;
+    }
+    #quizQuestionsList p {
+      margin-bottom: 10px;
+    }
+    .download-btn, .save-btn {
+      background-color: #ff6f00;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    .download-btn:hover, .save-btn:hover {
+      background-color: #e65c00;
+    }
+    .quiz-date-time {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-size: 12px;
+      color: #ff6f00;
+    }
+  </style>
+  <!-- Add jsPDF script -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <h1>Create Quiz</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="profile.html">Profile</a>
+    </nav>
+  </header>
+
+  <!-- Category Selection -->
+  <div class="form-container">
+    <h2>Select Quiz Category</h2>
+    <select id="category">
+      <option value="General Knowledge">General Knowledge</option>
+      <option value="Art">Art</option>
+      <option value="Music">Music</option>
+      <option value="Movies">Movies</option>
+      <option value="Paintings">Paintings</option>
+      <option value="History">History</option>
+      <option value="Food">Food</option>
+      <option value="Culture">Culture</option>
+      <option value="Games">Games</option>
+      <option value="Computer Science">Computer Science</option>
+    </select>
+    <button onclick="showQuestionForm()">Add Questions</button>
+  </div>
+
+  <!-- Question Form -->
+  <div class="form-container" id="questionForm" style="display: none;">
+    <h2>Add Questions (Minimum 5)</h2>
+    <div id="questionBoxes">
+      <!-- Question boxes will be dynamically added here -->
+    </div>
+    <button onclick="submitQuiz()">Submit Quiz</button>
+  </div>
+
+  <!-- Question Paper Section -->
+  <div class="question-paper" id="questionPaper" style="display: none;">
+    <h2>Question Paper</h2>
+    <div class="quiz-date-time" id="quizDateTime"></div>
+    <div class="question-paper-container">
+      <div class="rules">
+        <ul>
+          <li>Category: <span id="selectedCategory"></span></li>
+          <li>Date: <span id="quizDate"></span></li>
+          <li>Time: <span id="quizTime"></span></li>
+          <li>Time allowed: 30 minutes</li>
+          <li>Compulsory all questions</li>
+          <li>No cheating allowed</li>
+          <li>Select only 1 option</li>
+        </ul>
+      </div>
+      <div id="quizQuestionsList">
+        <!-- Questions will be displayed here -->
+      </div>
+      <button class="download-btn" onclick="downloadPDF()">Download</button>
+      <button class="save-btn" onclick="saveQuiz()">Save Quiz</button>
+    </div>
+  </div>
+  
+
+  <script>
+    let questionCount = 0;
+    let quizQuestions = [];
+
+    function showQuestionForm() {
+      const category = document.getElementById('category').value;
+      document.getElementById('questionForm').style.display = 'block';
+      addQuestionBox(); // Add first question box
+    }
+   
+    function addQuestionBox() {
+      if (questionCount < 5) {
+        const questionBox = document.createElement('div');
+        questionBox.classList.add('question-box');
+        questionBox.innerHTML = ` 
+          <h3>Question ${questionCount + 1}</h3>
+          <input type="text" placeholder="Enter your question" id="question${questionCount}">
+          <input type="text" placeholder="Option 1" id="option1${questionCount}">
+          <input type="text" placeholder="Option 2" id="option2${questionCount}">
+          <input type="text" placeholder="Option 3" id="option3${questionCount}">
+          <input type="text" placeholder="Option 4" id="option4${questionCount}">
+        `;
+        document.getElementById('questionBoxes').appendChild(questionBox);
+        questionCount++;
+      }
+    }
+
+    function submitQuiz() {
+      const questions = [];
+      for (let i = 0; i < questionCount; i++) {
+        const questionText = document.getElementById(`question${i}`).value;
+        const options = [
+          document.getElementById(`option1${i}`).value,
+          document.getElementById(`option2${i}`).value,
+          document.getElementById(`option3${i}`).value,
+          document.getElementById(`option4${i}`).value
+        ];
+        if (questionText && options.every(option => option)) {
+          questions.push({ question: questionText, options: options });
+        }
+      }
+
+      if (questions.length >= 5) {
+        quizQuestions = questions;
+        saveQuizData(document.getElementById('category').value, questions);  // Save quiz data in localStorage
+        displayQuestionPaper(questions);
+      } else {
+        alert('Please add at least 5 questions.');
+      }
+    }
+
+    function displayQuestionPaper(questions) {
+      const category = document.getElementById('category').value;
+      const currentDate = new Date();
+      const date = currentDate.toLocaleDateString();
+      const time = currentDate.toLocaleTimeString();
+
+      document.getElementById('selectedCategory').innerText = category;
+      document.getElementById('quizDate').innerText = date;
+      document.getElementById('quizTime').innerText = time;
+      document.getElementById('quizDateTime').innerText = `${date} - ${time}`;
+      
+      document.getElementById('questionPaper').style.display = 'block';
+      const quizQuestionsList = document.getElementById('quizQuestionsList');
+      quizQuestionsList.innerHTML = '';
+
+      questions.forEach((q, index) => {
+        const questionElement = document.createElement('div');
+        questionElement.innerHTML = `
+          <p><strong>${index + 1}. ${q.question}</strong></p>
+          <ol>
+            ${q.options.map(option => `<li>${option}</li>`).join('')}
+          </ol>
+        `;
+        quizQuestionsList.appendChild(questionElement);
+      });
+    }
+
+    function downloadPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+      // Set white background for the PDF
+      doc.setFillColor(255, 255, 255); // White background
+      doc.rect(0, 0, doc.internal.pageSize.width, doc.internal.pageSize.height, 'F');
+
+      // Set font size and content
+      doc.setFontSize(12);
+      doc.text('Quiz Question Paper', 20, 20);
+      doc.text(`Category: ${document.getElementById('selectedCategory').innerText}`, 20, 30);
+      doc.text(`Date: ${document.getElementById('quizDate').innerText}`, 20, 40);
+      doc.text(`Time: ${document.getElementById('quizTime').innerText}`, 20, 50);
+      doc.text('Time allowed: 30 minutes', 20, 60);
+      doc.text('Compulsory all questions', 20, 70);
+      doc.text('No cheating allowed', 20, 80);
+      doc.text('Select only 1 option', 20, 90);
+
+      quizQuestions.forEach((q, index) => {
+        doc.text(`${index + 1}. ${q.question}`, 20, 100 + (index * 30));
+        q.options.forEach((option, i) => {
+          doc.text(`${String.fromCharCode(65 + i)}. ${option}`, 20, 110 + (index * 30) + (i * 10));
+        });
+      });
+
+      // Ask user for download confirmation
+      if (confirm('Do you want to download the question paper?')) {
+        doc.save('quiz-question-paper.pdf');
+      }
+    }
+
+    function saveQuiz() {
+      // Implement saving functionality (e.g., saving to a database or local storage)
+      alert('Quiz saved successfully!');
+    }
+    
+    function saveQuizData(category, questions) {
+        // Get the existing data from localStorage, or initialize an empty object if nothing exists
+        let quizData = JSON.parse(localStorage.getItem('quizData')) || {};
+        
+        // Store the quiz under the given category
+        quizData[category] = questions;
+        
+        // Save the updated quiz data back to localStorage
+        localStorage.setItem('quizData', JSON.stringify(quizData));
+      }
+  </script>
+</body>
+</html>

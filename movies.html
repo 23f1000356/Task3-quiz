@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Movies Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom, #ffffff, #ffd699);
+      color: #333;
+    }
+    header {
+      background-color: #ff6f00;
+      color: #fff;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header a {
+      color: #fff;
+      text-decoration: none;
+      margin: 0 10px;
+    }
+    header a:hover {
+      text-decoration: underline;
+    }
+    .quizContent {
+      margin-top: 20px;
+      padding: 20px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: white;
+      overflow: hidden;
+      z-index: 1;
+    }
+    .quizContent h2 {
+      text-align: center;
+    }
+    .quiz-question {
+      margin: 15px 0;
+    }
+    .quiz-options {
+      list-style: none;
+      padding: 0;
+    }
+    .quiz-options li {
+      margin: 10px 0;
+      padding: 10px;
+      background: #ff6f00;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+      text-align: center;
+    }
+    .quiz-options li:hover {
+      background-color: #e65c00;
+    }
+    .btn-submit, .btn-start {
+      display: block;
+      margin: 20px auto;
+      padding: 10px 20px;
+      background-color: #ff6f00;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .btn-submit:hover, .btn-start:hover {
+      background-color: #e65c00;
+    }
+    .timer {
+      font-size: 24px;
+      text-align: center;
+      padding: 20px;
+    }
+    .nav-buttons {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .nav-buttons button {
+      padding: 10px 20px;
+      background-color: #ff6f00;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 0 10px;
+    }
+    .nav-buttons button:hover {
+      background-color: #e65c00;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1><a href="index.html">QuizMe</a></h1>
+    <nav>
+      <a href="profile.html">Profile</a>
+      <a href="index.html" class="home-icon">&#x1F3E0;</a>
+    </nav>
+  </header>
+
+  <section class="quizContent">
+    <div class="timer" id="timer">20:00</div>
+    <h2>Movies Quiz</h2>
+    <form id="quizForm">
+      <!-- Quiz questions will be dynamically added here -->
+    </form>
+    <div class="nav-buttons">
+      <button id="prevBtn" onclick="navigateQuestion(-1)" disabled>Previous</button>
+      <button id="nextBtn" onclick="navigateQuestion(1)">Next</button>
+    </div>
+    <button class="btn-submit" onclick="submitQuiz()">Submit Quiz</button>
+  </section>
+
+  <button class="btn-start" onclick="startQuiz()">Start Quiz</button>
+
+  <script>
+    const movieQuestions = [
+      { question: "Who directed the movie 'Titanic'?", options: ["James Cameron", "Steven Spielberg", "Martin Scorsese", "Christopher Nolan"], correctAnswer: 0 },
+      { question: "What is the name of the wizarding school in 'Harry Potter'?", options: ["Hogwarts", "Durmstrang", "Beauxbatons", "Ilvermorny"], correctAnswer: 0 },
+      { question: "Which actor played the character of 'Iron Man'?", options: ["Robert Downey Jr.", "Chris Hemsworth", "Chris Evans", "Mark Ruffalo"], correctAnswer: 0 },
+      { question: "Which movie won the Oscar for Best Picture in 1994?", options: ["Forrest Gump", "The Shawshank Redemption", "Pulp Fiction", "The Lion King"], correctAnswer: 0 },
+      { question: "In which movie does the character 'Jack Sparrow' appear?", options: ["Pirates of the Caribbean", "The Lord of the Rings", "Indiana Jones", "Star Wars"], correctAnswer: 0 },
+      { question: "What is the name of the fictional African country in the movie 'Black Panther'?", options: ["Wakanda", "Zamunda", "El Dorado", "Genovia"], correctAnswer: 0 },
+      { question: "Which movie features a character named 'The Dude'?", options: ["The Big Lebowski", "Pulp Fiction", "Fargo", "Donnie Brasco"], correctAnswer: 0 },
+      { question: "Who played the character 'Forrest Gump'?", options: ["Tom Hanks", "Brad Pitt", "Matt Damon", "Johnny Depp"], correctAnswer: 0 },
+      { question: "Which movie features the quote 'Here's looking at you, kid'?", options: ["Casablanca", "Gone with the Wind", "Citizen Kane", "The Godfather"], correctAnswer: 0 },
+      { question: "In which movie does the character 'E.T.' appear?", options: ["E.T. the Extra-Terrestrial", "Close Encounters of the Third Kind", "Star Wars", "The Matrix"], correctAnswer: 0 },
+      { question: "Which animated movie features the character 'Simba'?", options: ["The Lion King", "Aladdin", "Frozen", "Mulan"], correctAnswer: 0 },
+      { question: "Which director is known for movies like 'Jaws', 'E.T.', and 'Jurassic Park'?", options: ["Steven Spielberg", "James Cameron", "Christopher Nolan", "George Lucas"], correctAnswer: 0 },
+      { question: "What is the name of the ship in the movie 'Alien'?", options: ["Nostromo", "Enterprise", "Discovery", "Titanic"], correctAnswer: 0 },
+      { question: "Who played 'The Joker' in 'The Dark Knight'?", options: ["Heath Ledger", "Jared Leto", "Jack Nicholson", "Christian Bale"], correctAnswer: 0 },
+      { question: "What is the name of the protagonist in the movie 'The Matrix'?", options: ["Neo", "Trinity", "Morpheus", "Agent Smith"], correctAnswer: 0 },
+      { question: "In which movie would you find the character 'Darth Vader'?", options: ["Star Wars", "Star Trek", "The Terminator", "Blade Runner"], correctAnswer: 0 },
+      { question: "Which animated movie features the character 'Buzz Lightyear'?", options: ["Toy Story", "Finding Nemo", "Monsters, Inc.", "Cars"], correctAnswer: 0 },
+      { question: "In which movie is the phrase 'May the Force be with you' said?", options: ["Star Wars", "Indiana Jones", "The Matrix", "Star Trek"], correctAnswer: 0 },
+      { question: "What movie features the characters 'Woody' and 'Buzz Lightyear'?", options: ["Toy Story", "Frozen", "Zootopia", "Shrek"], correctAnswer: 0 },
+      { question: "Which movie is about a young boy named 'Harry' attending a school of magic?", options: ["Harry Potter", "Percy Jackson", "The Chronicles of Narnia", "The Hobbit"], correctAnswer: 0 },
+      { question: "Who played 'Jack Dawson' in the movie 'Titanic'?", options: ["Leonardo DiCaprio", "Brad Pitt", "Johnny Depp", "Matt Damon"], correctAnswer: 0 }
+    ];
+
+    let currentQuestionIndex = 0;
+    let quizStarted = false;
+    let timerInterval;
+    let answers = [];  // Array to store answers
+
+    function loadQuiz() {
+      const quizForm = document.getElementById('quizForm');
+      quizForm.innerHTML = ''; // Clear previous quiz content
+
+      const question = movieQuestions[currentQuestionIndex];
+      const questionDiv = document.createElement('div');
+      questionDiv.classList.add('quiz-question');
+      questionDiv.innerHTML = ` 
+        <p><strong>${currentQuestionIndex + 1}. ${question.question}</strong></p>
+        <ul class="quiz-options">
+          ${question.options.map((option, i) => ` 
+            <li>
+              <input type="radio" name="q${currentQuestionIndex}" value="${i}" id="q${currentQuestionIndex}-option${i}" ${answers[currentQuestionIndex] === i ? 'checked' : ''}>
+              <label for="q${currentQuestionIndex}-option${i}">${option}</label>
+            </li>
+          `).join('')}
+        </ul>
+      `;
+      quizForm.appendChild(questionDiv);
+    }
+
+    function startQuiz() {
+      quizStarted = true;
+      document.querySelector('.btn-start').style.display = 'none';
+      document.querySelector('.quizContent').style.display = 'block';
+      startTimer();
+      loadQuiz();
+    }
+
+    function startTimer() {
+      let timeRemaining = 20 * 60; // 20 minutes in seconds
+      timerInterval = setInterval(() => {
+        const minutes = Math.floor(timeRemaining / 60);
+        const seconds = timeRemaining % 60;
+        document.getElementById('timer').textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        timeRemaining--;
+
+        if (timeRemaining < 0) {
+          clearInterval(timerInterval);
+          alert("Time's up!");
+          submitQuiz();
+        }
+      }, 1000);
+    }
+
+    function navigateQuestion(direction) {
+      // Save the current answer before navigating
+      const selectedOption = document.querySelector(`input[name="q${currentQuestionIndex}"]:checked`);
+      if (selectedOption) {
+        answers[currentQuestionIndex] = parseInt(selectedOption.value);
+      }
+
+      if (currentQuestionIndex + direction >= 0 && currentQuestionIndex + direction < movieQuestions.length) {
+        currentQuestionIndex += direction;
+        loadQuiz();
+        document.getElementById('prevBtn').disabled = currentQuestionIndex === 0;
+        document.getElementById('nextBtn').disabled = currentQuestionIndex === movieQuestions.length - 1;
+      }
+    }
+
+    function submitQuiz() {
+      let score = 0;
+      let correctAnswers = [];
+      let incorrectAnswers = [];
+
+      // Check each question's answer
+      movieQuestions.forEach((question, index) => {
+        if (answers[index] === question.correctAnswer) {
+          score++;
+          correctAnswers.push(`${index + 1}. ${question.question}: Correct answer`);
+        } else {
+          incorrectAnswers.push(`${index + 1}. ${question.question}: Incorrect answer`);
+        }
+      });
+
+      // Calculate the percentage
+      const percentage = (score / movieQuestions.length) * 100;
+
+      // Stop the timer
+      clearInterval(timerInterval);
+
+      // Display the result in a popup with correct and incorrect answers
+      alert(`Quiz submitted successfully!\n\nYour score: ${score} out of 20\nPercentage: ${percentage.toFixed(2)}%\n\nCorrect Answers:\n${correctAnswers.join("\n")}\n\nIncorrect Answers:\n${incorrectAnswers.join("\n")}`);
+
+      // Redirect to the index page after 10 seconds
+      setTimeout(() => {
+        window.location.href = 'index.html'; // Redirect to index.html
+      }, 10000); // 10-second delay
+    }
+  </script>
+</body>
+</html>

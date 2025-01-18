@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuizMe</title>
+  <style>
+    /* Existing styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom, #ffffff, #ffd699);
+      color: #333;
+    }
+    header {
+      background-color: #ff6f00;
+      color: #fff;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header a {
+      color: #fff;
+      text-decoration: none;
+      margin: 0 10px;
+    }
+    header a:hover {
+      text-decoration: underline;
+    }
+    .dashboard {
+      padding: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+    .flashcard {
+      position: relative;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      text-align: center;
+      color: #fff;
+      height: 200px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+      background-size: cover;
+      background-position: center;
+    }
+    .flashcard:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+    }
+    .flashcard .text-box {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      right: 20px;
+      background-color: rgba(255, 111, 0, 0.8);
+      padding: 10px;
+      border-radius: 5px;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    }
+    .flashcard h3 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .flashcard p {
+      margin: 5px 0 0;
+      font-size: 14px;
+    }
+    .leaderboard {
+      margin: 40px 20px;
+      background: #fff;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .leaderboard h2 {
+      margin: 0 0 20px;
+    }
+    .leaderboard ul {
+      list-style: none;
+      padding: 0;
+    }
+    .leaderboard li {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #ddd;
+    }
+    .popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      text-align: center;
+      z-index: 10;
+      display: none;
+    }
+    .popup button {
+      background-color: #ff6f00;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .popup button:hover {
+      background-color: #e65c00;
+    }
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 5;
+      display: none;
+    }
+    .archived {
+      margin: 40px 20px;
+      background: #fff;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .archived h2 {
+      margin: 0 0 20px;
+    }
+    .archived ul {
+      list-style: none;
+      padding: 0;
+    }
+    .archived li {
+      padding: 10px 0;
+      border-bottom: 1px solid #ddd;
+    }
+    .archived select {
+      width: 200px;
+      padding: 5px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    .archived .explanation {
+      font-size: 14px;
+      color: #555;
+      margin-top: 5px;
+    }
+    .quizContent {
+      margin-top: 20px;
+      padding: 20px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .generate-quiz-btn {
+      background-color: #ff6f00;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      text-align: center;
+      margin: 20px 0;
+      border: none;
+    }
+    .generate-quiz-btn:hover {
+      background-color: #e65c00;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <h1>QuizMe</h1>
+    <nav>
+      <a href="quiz.html">Create Quiz</a>
+      <a href="login.html">Login</a>
+      <a href="register.html">Register</a>
+      <a href="joke.html">Jokes</a>
+      <a href="profile.html">Profile</a>
+    </nav>
+  </header>
+
+  <!-- Flashcard Dashboard -->
+  <section class="dashboard">
+    <div class="flashcard" style="background-image: url('p1.jpg');" onclick="window.location.href='gk.html';">
+      <div class="text-box">
+        <h3>General Knowledge</h3>
+        <p>Test your overall trivia skills!</p>
+      </div>
+    </div>
+    <div class="flashcard" style="background-image: url('food.jpg');" onclick="window.location.href='food.html';">
+      <div class="text-box">
+        <h3>Food</h3>
+        <p>How much do you know about cuisine?</p>
+      </div>
+    </div>
+    <div class="flashcard" style="background-image: url('art.jpg');" onclick="window.location.href='art.html';">
+      <div class="text-box">
+        <h3>Art</h3>
+        <p>Explore famous artworks and styles!</p>
+      </div>
+    </div>
+    <div class="flashcard" style="background-image: url('is.jpg');" onclick="window.location.href='historyquiz.html';">
+      <div class="text-box">
+        <h3>History</h3>
+        <p>Discover the past's greatest events.</p>
+      </div>
+    </div>
+    <div class="flashcard" style="background-image: url('mov.jpg');" onclick="window.location.href='movies.html';">
+      <div class="text-box">
+        <h3>Movies</h3>
+        <p>How much do you know about films?</p>
+      </div>
+    </div>
+    <div class="flashcard" style="background-image: url('pain.jpg');" onclick="window.location.href='paintings.html';">
+      <div class="text-box">
+        <h3>Famous Paintings</h3>
+        <p>Identify legendary works of art!</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Generate Quiz Button -->
+  <section>
+    <button class="generate-quiz-btn" onclick="generateQuiz()">Generate Quiz</button>
+  </section>
+
+  <!-- Quiz Content Section -->
+  <section class="quizContent" id="quizContent">
+    <!-- Quiz questions will be displayed here -->
+  </section>
+
+  <!-- Leaderboard -->
+  <section class="leaderboard">
+    <h2>Leaderboard</h2>
+    <ul>
+      <li><span>User1</span><span>150 points</span></li>
+      <li><span>User2</span><span>120 points</span></li>
+      <li><span>User3</span><span>100 points</span></li>
+      <li><span>User4</span><span>90 points</span></li>
+      <li><span>User5</span><span>80 points</span></li>
+    </ul>
+  </section>
+
+  <!-- Archived Questions -->
+  <section class="archived">
+    <h2>Archived Questions</h2>
+    <ul>
+        <ul>
+            <li>
+              <p>What is the capital of Australia?</p>
+              <select>
+                <option value="Canberra">Canberra</option>
+                <option value="Sydney">Sydney</option>
+                <option value="Melbourne">Melbourne</option>
+                <option value="Brisbane">Brisbane</option>
+              </select>
+              <p class="explanation">The capital of Australia is Canberra, not Sydney or Melbourne, even though they are more famous.</p>
+            </li>
+            <li>
+              <p>Who painted the Mona Lisa?</p>
+              <select>
+                <option value="Leonardo Da Vinci">Leonardo Da Vinci</option>
+                <option value="Vincent Van Gogh">Vincent Van Gogh</option>
+                <option value="Pablo Picasso">Pablo Picasso</option>
+                <option value="Claude Monet">Claude Monet</option>
+              </select>
+              <p class="explanation">The Mona Lisa was painted by Leonardo Da Vinci in the early 16th century.</p>
+            </li>
+            <li>
+              <p>What is the square root of 144?</p>
+              <select>
+                <option value="12">12</option>
+                <option value="10">10</option>
+                <option value="14">14</option>
+                <option value="16">16</option>
+              </select>
+              <p class="explanation">The square root of 144 is 12, as 12 * 12 = 144.</p>
+            </li>
+            <li>
+              <p>Which year did the Titanic sink?</p>
+              <select>
+                <option value="1912">1912</option>
+                <option value="1905">1905</option>
+                <option value="1920">1920</option>
+                <option value="1930">1930</option>
+              </select>
+              <p class="explanation">The Titanic sank in 1912 after hitting an iceberg on its maiden voyage.</p>
+            </li>
+            <li>
+              <p>Who wrote 'Romeo and Juliet'?</p>
+              <select>
+                <option value="William Shakespeare">William Shakespeare</option>
+                <option value="Charles Dickens">Charles Dickens</option>
+                <option value="Jane Austen">Jane Austen</option>
+                <option value="Mark Twain">Mark Twain</option>
+              </select>
+              <p class="explanation">'Romeo and Juliet' was written by William Shakespeare, one of the greatest playwrights in history.</p>
+            </li>
+    </ul>
+  </section>
+
+  <!-- Popup -->
+  <div class="overlay" id="overlay"></div>
+  <div class="popup" id="popup">
+    <h3>Quiz Completed</h3>
+    <p>Well done! You have completed this quiz.</p>
+    <button onclick="closePopup()">Close</button>
+  </div>
+
+  <script>
+    // Popup display functions
+    function closePopup() {
+      document.getElementById('popup').style.display = 'none';
+      document.getElementById('overlay').style.display = 'none';
+    }
+    
+    // Fetch quiz data and display
+    function fetchQuizData(categoryId) {
+      const quizContent = document.getElementById('quizContent');
+      quizContent.innerHTML = `
+        <h2>Quiz Category: ${categoryId}</h2>
+        <p>Questions will be displayed here for category ${categoryId}.</p>
+        <button onclick="finishQuiz()">Finish Quiz</button>
+      `;
+    }
+
+    function generateQuiz() {
+      // Simulate fetching quiz data from an API
+      fetch('https://api.example.com/generate-quiz')  // Replace with actual API URL
+        .then(response => response.json())
+        .then(data => {
+          // Process and display the quiz data
+          fetchQuizData(data.category);
+        })
+        .catch(error => {
+          console.error('Error fetching quiz:', error);
+        });
+    }
+
+    // Finish quiz and show popup
+    function finishQuiz() {
+      document.getElementById('popup').style.display = 'block';
+      document.getElementById('overlay').style.display = 'block';
+    }
+  </script>
+</body>
+</html>

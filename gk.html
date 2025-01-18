@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>General Knowledge Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom, #ffffff, #ffd699);
+      color: #333;
+    }
+    header {
+      background-color: #ff6f00;
+      color: #fff;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header a {
+      color: #fff;
+      text-decoration: none;
+      margin: 0 10px;
+    }
+    header a:hover {
+      text-decoration: underline;
+    }
+    .quizContent {
+      margin-top: 20px;
+      padding: 20px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: white;
+      overflow: hidden;
+      z-index: 1;
+    }
+    .quizContent h2 {
+      text-align: center;
+    }
+    .quiz-question {
+      margin: 15px 0;
+    }
+    .quiz-options {
+      list-style: none;
+      padding: 0;
+    }
+    .quiz-options li {
+      margin: 10px 0;
+      padding: 10px;
+      background: #ff6f00;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+      text-align: center;
+    }
+    .quiz-options li:hover {
+      background-color: #e65c00;
+    }
+    .btn-submit, .btn-start {
+      display: block;
+      margin: 20px auto;
+      padding: 10px 20px;
+      background-color: #ff6f00;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .btn-submit:hover, .btn-start:hover {
+      background-color: #e65c00;
+    }
+    .timer {
+      font-size: 24px;
+      text-align: center;
+      padding: 20px;
+    }
+    .nav-buttons {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .nav-buttons button {
+      padding: 10px 20px;
+      background-color: #ff6f00;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 0 10px;
+    }
+    .nav-buttons button:hover {
+      background-color: #e65c00;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1><a href="index.html">QuizMe</a></h1>
+    <nav>
+      <a href="profile.html">Profile</a>
+      <a href="index.html" class="home-icon">&#x1F3E0;</a>
+    </nav>
+  </header>
+
+  <section class="quizContent">
+    <div class="timer" id="timer">20:00</div>
+    <h2>General Knowledge Quiz</h2>
+    <form id="quizForm">
+      <!-- Quiz questions will be dynamically added here -->
+    </form>
+    <div class="nav-buttons">
+      <button id="prevBtn" onclick="navigateQuestion(-1)" disabled>Previous</button>
+      <button id="nextBtn" onclick="navigateQuestion(1)">Next</button>
+    </div>
+    <button class="btn-submit" onclick="submitQuiz()">Submit Quiz</button>
+  </section>
+
+  <button class="btn-start" onclick="startQuiz()">Start Quiz</button>
+
+  <script>
+    const generalKnowledgeQuestions = [
+      { question: "What is the capital of France?", options: ["Paris", "London", "Berlin", "Madrid"], correctAnswer: 0 },
+      { question: "Who wrote 'Romeo and Juliet'?", options: ["William Shakespeare", "Charles Dickens", "Jane Austen", "Mark Twain"], correctAnswer: 0 },
+      { question: "What is the largest planet in our solar system?", options: ["Jupiter", "Saturn", "Earth", "Mars"], correctAnswer: 0 },
+      { question: "Who painted the Mona Lisa?", options: ["Leonardo da Vinci", "Vincent van Gogh", "Pablo Picasso", "Claude Monet"], correctAnswer: 0 },
+      { question: "What is the hardest natural substance on Earth?", options: ["Diamond", "Gold", "Iron", "Platinum"], correctAnswer: 0 },
+      { question: "What is the largest ocean on Earth?", options: ["Pacific Ocean", "Atlantic Ocean", "Indian Ocean", "Southern Ocean"], correctAnswer: 0 },
+      { question: "What is the smallest country in the world?", options: ["Vatican City", "Monaco", "Nauru", "San Marino"], correctAnswer: 0 },
+      { question: "Who was the first man to walk on the moon?", options: ["Neil Armstrong", "Buzz Aldrin", "Yuri Gagarin", "Michael Collins"], correctAnswer: 0 },
+      { question: "What is the longest river in the world?", options: ["Nile", "Amazon", "Yangtze", "Mississippi"], correctAnswer: 0 },
+      { question: "What is the tallest mountain in the world?", options: ["Mount Everest", "K2", "Kangchenjunga", "Makalu"], correctAnswer: 0 },
+      { question: "Who invented the lightbulb?", options: ["Thomas Edison", "Nikola Tesla", "Alexander Graham Bell", "Benjamin Franklin"], correctAnswer: 0 },
+      { question: "Which country is known as the Land of the Rising Sun?", options: ["Japan", "China", "South Korea", "India"], correctAnswer: 0 },
+      { question: "What element does 'O' represent on the periodic table?", options: ["Oxygen", "Osmium", "Ozone", "Opium"], correctAnswer: 0 },
+      { question: "Who discovered penicillin?", options: ["Alexander Fleming", "Marie Curie", "Louis Pasteur", "Isaac Newton"], correctAnswer: 0 },
+      { question: "In which year did World War I begin?", options: ["1914", "1912", "1916", "1910"], correctAnswer: 0 },
+      { question: "Who is the author of 'Harry Potter'?", options: ["J.K. Rowling", "J.R.R. Tolkien", "George R.R. Martin", "Stephen King"], correctAnswer: 0 },
+      { question: "What is the largest country by area?", options: ["Russia", "Canada", "United States", "China"], correctAnswer: 0 },
+      { question: "Which country has the most official languages?", options: ["South Africa", "India", "Switzerland", "Belgium"], correctAnswer: 0 },
+      { question: "What is the national sport of Japan?", options: ["Sumo Wrestling", "Baseball", "Soccer", "Judo"], correctAnswer: 0 }
+    ];
+
+    let currentQuestionIndex = 0;
+    let quizStarted = false;
+    let timerInterval;
+    let answers = [];  // Array to store answers
+
+    function loadQuiz() {
+      const quizForm = document.getElementById('quizForm');
+      quizForm.innerHTML = ''; // Clear previous quiz content
+
+      const question = generalKnowledgeQuestions[currentQuestionIndex];
+      const questionDiv = document.createElement('div');
+      questionDiv.classList.add('quiz-question');
+      questionDiv.innerHTML = ` 
+        <p><strong>${currentQuestionIndex + 1}. ${question.question}</strong></p>
+        <ul class="quiz-options">
+          ${question.options.map((option, i) => ` 
+            <li>
+              <input type="radio" name="q${currentQuestionIndex}" value="${i}" id="q${currentQuestionIndex}-option${i}" ${answers[currentQuestionIndex] === i ? 'checked' : ''}>
+              <label for="q${currentQuestionIndex}-option${i}">${option}</label>
+            </li>
+          `).join('')}
+        </ul>
+      `;
+      quizForm.appendChild(questionDiv);
+    }
+
+    function startQuiz() {
+      quizStarted = true;
+      document.querySelector('.btn-start').style.display = 'none';
+      document.querySelector('.quizContent').style.display = 'block';
+      startTimer();
+      loadQuiz();
+    }
+
+    function startTimer() {
+      let timeRemaining = 20 * 60; // 20 minutes in seconds
+      timerInterval = setInterval(() => {
+        const minutes = Math.floor(timeRemaining / 60);
+        const seconds = timeRemaining % 60;
+        document.getElementById('timer').textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        timeRemaining--;
+
+        if (timeRemaining < 0) {
+          clearInterval(timerInterval);
+          alert("Time's up!");
+          submitQuiz();
+        }
+      }, 1000);
+    }
+
+    function navigateQuestion(direction) {
+      // Save the current answer before navigating
+      const selectedOption = document.querySelector(`input[name="q${currentQuestionIndex}"]:checked`);
+      if (selectedOption) {
+        answers[currentQuestionIndex] = parseInt(selectedOption.value);
+      }
+
+      if (currentQuestionIndex + direction >= 0 && currentQuestionIndex + direction < generalKnowledgeQuestions.length) {
+        currentQuestionIndex += direction;
+        loadQuiz();
+        document.getElementById('prevBtn').disabled = currentQuestionIndex === 0;
+        document.getElementById('nextBtn').disabled = currentQuestionIndex === generalKnowledgeQuestions.length - 1;
+      }
+    }
+
+    function submitQuiz() {
+      let score = 0;
+      let correctAnswers = [];
+      let incorrectAnswers = [];
+
+      // Check each question's answer
+      generalKnowledgeQuestions.forEach((question, index) => {
+        if (answers[index] === question.correctAnswer) {
+          score++;
+          correctAnswers.push(`${index + 1}. ${question.question}: Correct answer`);
+        } else {
+          incorrectAnswers.push(`${index + 1}. ${question.question}: Incorrect answer`);
+        }
+      });
+
+      // Calculate the percentage
+      const percentage = (score / generalKnowledgeQuestions.length) * 100;
+
+      // Stop the timer
+      clearInterval(timerInterval);
+
+      // Display the result in a popup with correct and incorrect answers
+      alert(`Quiz submitted successfully!\n\nYour score: ${score} out of 20\nPercentage: ${percentage.toFixed(2)}%\n\nCorrect Answers:\n${correctAnswers.join("\n")}\n\nIncorrect Answers:\n${incorrectAnswers.join("\n")}`);
+
+      // Redirect to the index page after 10 seconds
+      setTimeout(() => {
+        window.location.href = 'index.html'; // Redirect to index.html
+      }, 10000); // 10-second delay
+    }
+  </script>
+</body>
+</html>

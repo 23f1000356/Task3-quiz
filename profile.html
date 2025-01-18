@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Profile - QuizMe</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom, #ffffff, #ffd699);
+      color: #333;
+    }
+    header {
+      background-color: #ff6f00;
+      color: #fff;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header a {
+      color: #fff;
+      text-decoration: none;
+      margin: 0 10px;
+    }
+    header a:hover {
+      text-decoration: underline;
+    }
+    .profile-container {
+      padding: 20px;
+      margin: 20px;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .profile-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .profile-header h2 {
+      margin: 0;
+    }
+    .profile-header button {
+      background-color: #ff6f00;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .profile-header button:hover {
+      background-color: #e65c00;
+    }
+    .profile-details {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .profile-details span {
+      font-weight: bold;
+    }
+    .edit-profile {
+      display: none;
+      margin-top: 20px;
+    }
+    .edit-profile input, .edit-profile select {
+      width: 100%;
+      padding: 10px;
+      margin: 5px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    .edit-profile button {
+      background-color: #ff6f00;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .edit-profile button:hover {
+      background-color: #e65c00;
+    }
+    .profile-pic-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .profile-pic {
+      width: 150px; /* Increased width */
+      height: 150px; /* Increased height */
+      border-radius: 50%; /* Keeps the circle shape */
+      object-fit: cover;
+      border: 3px solid #ff6f00; /* Border color */
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <a href="index.html">QuizMe</a>
+    <nav>
+      <a href="profile.html">Profile</a>
+      <a href="index.html" class="home-icon">&#x1F3E0;</a>
+    </nav>
+  </header>
+
+  <!-- Profile Container -->
+  <section class="profile-container">
+    <div class="profile-header">
+      <h2>User Profile</h2>
+      <button onclick="editProfile()">Edit Profile</button>
+    </div>
+
+    <!-- Profile Picture Container -->
+    <div class="profile-pic-container">
+      <img id="userPicDisplay" class="profile-pic" src="" alt="Profile Picture" />
+    </div>
+
+    <div class="profile-details">
+      <p><span>Name:</span> <span id="userName">Not Set</span></p>
+      <p><span>Email:</span> <span id="userEmail">Not Set</span></p>
+      <p><span>Age:</span> <span id="userAge">Not Set</span></p>
+      <p><span>Gender:</span> <span id="userGender">Not Set</span></p>
+      <p><span>Interests:</span> <span id="userInterests">Not Set</span></p>
+    </div>
+
+    <!-- Edit Profile Section -->
+    <div class="edit-profile" id="editProfileSection">
+      <h3>Edit Profile</h3>
+      <input type="text" id="editName" placeholder="Enter Name" required>
+      <input type="email" id="editEmail" placeholder="Enter Email" required>
+      <input type="number" id="editAge" placeholder="Enter Age" required>
+      
+      <!-- Gender Dropdown -->
+      <label for="editGender">Select Gender:</label>
+      <select id="editGender">
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+        <option value="Other">Other</option>
+      </select>
+      
+      <!-- Profile Picture Upload -->
+      <label for="editPic">Upload Profile Picture:</label>
+      <input type="file" id="editPic" accept="image/*">
+      
+      <!-- Interests Dropdown (Multiple Selection) -->
+      <label for="editInterests">Select Interests:</label>
+      <select id="editInterests" multiple>
+        <option value="Art">Art</option>
+        <option value="Music">Music</option>
+        <option value="Paintings">Paintings</option>
+        <option value="History">History</option>
+        <option value="Food">Food</option>
+        <option value="Culture">Culture</option>
+        <option value="General Knowledge">General Knowledge</option>
+      </select>
+      
+      <button onclick="saveProfile()">Save</button>
+      <button onclick="cancelEdit()">Cancel</button>
+    </div>
+  </section>
+
+  <script>
+    function editProfile() {
+      document.getElementById('editProfileSection').style.display = 'block';
+    }
+
+    function saveProfile() {
+      const name = document.getElementById('editName').value;
+      const email = document.getElementById('editEmail').value;
+      const age = document.getElementById('editAge').value;
+      const gender = document.getElementById('editGender').value;
+      
+      // Handle Profile Picture Upload
+      const fileInput = document.getElementById('editPic');
+      const profilePic = fileInput.files.length > 0 ? URL.createObjectURL(fileInput.files[0]) : "";
+
+      // Get selected interests
+      const selectedInterests = Array.from(document.getElementById('editInterests').selectedOptions).map(option => option.value);
+      
+      // Update profile section with new data
+      document.getElementById('userName').textContent = name;
+      document.getElementById('userEmail').textContent = email;
+      document.getElementById('userAge').textContent = age;
+      document.getElementById('userGender').textContent = gender;
+      document.getElementById('userInterests').textContent = selectedInterests.join(', ');
+
+      // Update profile picture if available
+      document.getElementById('userPicDisplay').src = profilePic;
+
+      cancelEdit(); // Hide the edit profile section
+    }
+
+    function cancelEdit() {
+      document.getElementById('editProfileSection').style.display = 'none';
+    }
+  </script>
+</body>
+</html>
